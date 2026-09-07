@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>互传 · 文件传输</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="app">
+        <!-- 导航栏 -->
+        <header class="navbar">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <rect x="2" y="2" width="28" height="28" rx="8" fill="#4F46E5" />
+                    <path d="M10 16L14 20L22 12" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                    <circle cx="22" cy="20" r="2" fill="white" />
+                </svg>
+                <span>互传</span>
+            </div>
+            <span class="nav-tag">文件传输</span>
+        </header>
+
+        <!-- 主卡片 -->
+        <main class="card">
+            <!-- 选项卡 -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="send">发送</button>
+                <button class="tab-btn" data-tab="receive">接收</button>
+            </div>
+
+            <!-- ===== 发送面板 ===== -->
+            <section class="panel send-panel" id="sendPanel">
+                <!-- 上传区域 -->
+                <div class="drop-zone" id="dropZone">
+                    <div class="drop-content">
+                        <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                            <rect x="4" y="4" width="48" height="48" rx="12" stroke="#4F46E5" stroke-width="2" stroke-dasharray="4 4" />
+                            <path d="M28 16V40M16 28H40" stroke="#4F46E5" stroke-width="3" stroke-linecap="round" />
+                        </svg>
+                        <p class="drop-text">拖拽文件到此处 或 <span class="link-text">点击选择</span></p>
+                        <p class="drop-hint">单个文件，最大 100 MB</p>
+                    </div>
+                    <input type="file" id="fileInput" />
+                </div>
+
+                <!-- 文件信息（上传后显示） -->
+                <div class="file-info" id="fileInfo" style="display:none;">
+                    <div class="file-card">
+                        <div class="file-icon">
+                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                                <rect x="6" y="2" width="28" height="36" rx="4" stroke="#4F46E5" stroke-width="2" />
+                                <path d="M14 12H26M14 18H26M14 24H22" stroke="#4F46E5" stroke-width="2" stroke-linecap="round" />
+                            </svg>
+                        </div>
+                        <div class="file-meta">
+                            <span class="file-name" id="fileName">文件名</span>
+                            <span class="file-size" id="fileSize">0 KB</span>
+                        </div>
+                        <button class="btn-remove" id="removeFile" title="移除文件">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M15 5L5 15M5 5L15 15" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- 分享码 -->
+                    <div class="share-section">
+                        <label class="share-label">分享码</label>
+                        <div class="share-code-wrapper">
+                            <span class="share-code" id="shareCode">------</span>
+                            <button class="btn-copy" id="copyCode" title="复制分享码">
+                                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                    <rect x="6" y="6" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5" />
+                                    <path d="M12 6V4.5C12 3.67157 11.3284 3 10.5 3H4.5C3.67157 3 3 3.67157 3 4.5V10.5C3 11.3284 3.67157 12 4.5 12H6" stroke="currentColor" stroke-width="1.5" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="share-link-wrapper">
+                            <input type="text" class="share-link" id="shareLink" readonly />
+                            <button class="btn-copy" id="copyLink" title="复制链接">
+                                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                    <rect x="6" y="6" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5" />
+                                    <path d="M12 6V4.5C12 3.67157 11.3284 3 10.5 3H4.5C3.67157 3 3 3.67157 3 4.5V10.5C3 11.3284 3.67157 12 4.5 12H6" stroke="currentColor" stroke-width="1.5" />
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="share-tip">复制链接或分享码，对方在「接收」页输入即可下载</p>
+                    </div>
+
+                    <button class="btn-upload-new" id="uploadNew">上传新文件</button>
+                </div>
+            </section>
+
+            <!-- ===== 接收面板 ===== -->
+            <section class="panel receive-panel" id="receivePanel" style="display:none;">
+                <div class="receive-form">
+                    <label class="receive-label" for="receiveInput">输入分享码</label>
+                    <div class="receive-input-wrapper">
+                        <input type="text" id="receiveInput" placeholder="例如：A1B2C3" maxlength="6" autocomplete="off" />
+                        <button class="btn-primary" id="fetchBtn">获取文件</button>
+                    </div>
+                </div>
+
+                <!-- 接收结果 -->
+                <div class="receive-result" id="receiveResult" style="display:none;">
+                    <div class="file-card receive-file-card">
+                        <div class="file-icon">
+                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                                <rect x="6" y="2" width="28" height="36" rx="4" stroke="#10B981" stroke-width="2" />
+                                <path d="M14 12H26M14 18H26M14 24H22" stroke="#10B981" stroke-width="2" stroke-linecap="round" />
+                            </svg>
+                        </div>
+                        <div class="file-meta">
+                            <span class="file-name" id="receiveFileName">文件名</span>
+                            <span class="file-size" id="receiveFileSize">0 KB</span>
+                        </div>
+                    </div>
+                    <button class="btn-download" id="downloadBtn">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M10 3V13M10 13L6 9M10 13L14 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M3 15V16.5C3 17.3284 3.67157 18 4.5 18H15.5C16.3284 18 17 17.3284 17 16.5V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        下载文件
+                    </button>
+                </div>
+
+                <div class="receive-error" id="receiveError" style="display:none;">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                        <circle cx="16" cy="16" r="14" stroke="#EF4444" stroke-width="2" />
+                        <path d="M12 12L20 20M20 12L12 20" stroke="#EF4444" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                    <p id="errorMsg">未找到该分享码对应的文件</p>
+                </div>
+            </section>
+        </main>
+
+        <!-- 底部 -->
+        <footer class="footer">
+            <p>&copy; 2026 互传 · 文件传输工具</p>
+            <p class="footer-note">文件仅保存在当前浏览器中，清除数据后失效</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
